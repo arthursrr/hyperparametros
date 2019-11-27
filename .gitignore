@@ -1,0 +1,6 @@
+#remoção dos arquivos do visual studio code
+.vscode
+.pylintrc
+#remoção do cache do python
+_pycache_
+__pycache__/
