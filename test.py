@@ -7,11 +7,11 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 
 from optimizers import AdaBound
-from activations import ISRLU as act
+from activations import bentID as act
 
 batch_size = 128
 num_classes = 10
-epochs = 200
+epochs = 10
 
 # input image dimensions
 img_rows, img_cols = 28, 28

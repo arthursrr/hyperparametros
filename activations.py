@@ -20,7 +20,6 @@ def ISRLU(x, alpha=1.0):
         - ISRLU paper: https://arxiv.org/pdf/1710.09967.pdf
     '''
     # K.dot(K.pow(K.sqrt(K.update_add(K.dot(alpha, K.pow(x, 2)), 1.0)), -1), x)
-    print(x)
     # print(tf.shape(x))
     return tf.where(K.greater_equal(x, K.zeros(shape=tf.shape(x))),
                     x,
@@ -43,13 +42,13 @@ def ISRU(x, alpha=1.0):
     References:
         - ISRLU paper: https://arxiv.org/pdf/1710.09967.pdf
     '''
-    return K.dot(K.pow(K.sqrt(K.update_add(K.dot(alpha, K.pow(x, 2)), 1)), -1), x)
+    return x / K.sqrt(1 +(alpha*K.pow(x, 2)))
 
 def bentID(x):
     '''
-    Bent Indentity
+    Bent Identity
     .. math::
         bentID(x)=x\\left (\\frac{1}{\sqrt{1+\\alpha x^{2}}} \\right )
     '''
 
-    return K.update_add(K.dot(K.update_sub(K.sqrt(K.update_add(K.pow(x,2),1)),1),K.pow(2, -1)), x)
+    return ((K.sqrt(K.pow(x,2)+1)-1)/2)+x
