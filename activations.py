@@ -1,7 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from keras import backend as K
 
 import tensorflow as tf
@@ -23,9 +19,12 @@ def ISRLU(x, alpha=1.0):
     References:
         - ISRLU paper: https://arxiv.org/pdf/1710.09967.pdf
     '''
-    return tf.where(K.greater_equal(x, 0),
+    # K.dot(K.pow(K.sqrt(K.update_add(K.dot(alpha, K.pow(x, 2)), 1.0)), -1), x)
+    print(x)
+    # print(tf.shape(x))
+    return tf.where(K.greater_equal(x, K.zeros(shape=tf.shape(x))),
                     x,
-                    K.dot(K.pow(K.sqrt(K.update_add(K.dot(alpha, K.pow(x, 2.0)), 1.0)), -1), x))
+                    x / K.sqrt(1 +(alpha*K.pow(x, 2))))
 
 def ISRU(x, alpha=1.0):
     '''
@@ -44,4 +43,13 @@ def ISRU(x, alpha=1.0):
     References:
         - ISRLU paper: https://arxiv.org/pdf/1710.09967.pdf
     '''
-    return K.dot(K.pow(K.sqrt(K.update_add(K.dot(alpha, K.pow(x, 2.0)), 1.0)), -1), x)
+    return K.dot(K.pow(K.sqrt(K.update_add(K.dot(alpha, K.pow(x, 2)), 1)), -1), x)
+
+def bentID(x):
+    '''
+    Bent Indentity
+    .. math::
+        bentID(x)=x\\left (\\frac{1}{\sqrt{1+\\alpha x^{2}}} \\right )
+    '''
+
+    return K.update_add(K.dot(K.update_sub(K.sqrt(K.update_add(K.pow(x,2),1)),1),K.pow(2, -1)), x)
