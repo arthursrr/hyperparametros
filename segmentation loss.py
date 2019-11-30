@@ -1,5 +1,6 @@
 import tensorflow as tf
 from keras.losses import binary_crossentropy
+import keras.backend as K
 
 def dice_loss(y_true, y_pred):
     numerator = 2 * tf.reduce_sum(y_true * y_pred, axis=(1,2,3))
@@ -30,3 +31,17 @@ def CrossDice_loss(y_true, y_pred):
         return tf.reshape(1 - numerator / denominator, (-1, 1, 1))
 
     return binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+
+def tversky_loss(beta=0.8):
+  def loss(y_true, y_pred):
+    numerator = tf.reduce_sum(y_true * y_pred, axis=-1)
+    denominator = y_true * y_pred + beta * (1 - y_true) * y_pred + (1 - beta) * y_true * (1 - y_pred)
+
+    return 1 - (numerator + 1) / (tf.reduce_sum(denominator, axis=-1) + 1)
+
+  return loss
+
+def focal_tversky(y_true,y_pred):
+    pt_1 = tversky_loss()
+    gamma = 0.75
+    return K.pow((1-pt_1), gamma)
